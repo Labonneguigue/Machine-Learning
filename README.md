@@ -27,7 +27,7 @@ By successively executing the Expectation and Maximization steps of the EM algor
 The output is the centroids-[iteration].csv files.
 
 
-![alt tag](https://github.com/Labonneguigue/Machine-Learning/tree/master/Images/kmeans.png)
+![alt tag](https://raw.github.com/Labonneguigue/Machine-Learning/tree/master/Images/kmeans.png)
 
 
 2.  Maximum Likelihood EM for the Gaussian Mixture Model (GMM)

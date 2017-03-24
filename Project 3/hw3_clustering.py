@@ -6,13 +6,13 @@ from numpy import genfromtxt
 from numpy.linalg import inv
 import random
 from random import randint
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import axes3d, Axes3D
+#import matplotlib.pyplot as plt
+#from mpl_toolkits.mplot3d import axes3d, Axes3D
+#import time
+#start_time = time.time()
+
 
 PrintEnabled = 0
-
-if (len(sys.argv) > 2):
-    PrintEnabled = 1
 
 X = genfromtxt(sys.argv[1], delimiter=',')
 
@@ -69,9 +69,6 @@ def GetNextCentroid(C):
         Dists = []
         for c in range(0,C):
             Dists.append(numpy.sum(numpy.multiply(X[n]-Centroids[c], X[n]-Centroids[c])))
-            print("hop")
-        print("finish")
-        print(Dists)
         Dist.append(min(Dists))
     ProbabilityDist = Dist/sum(Dist)
     CumulativeProbability = ProbabilityDist.cumsum()
@@ -91,7 +88,7 @@ while indexOverNbClusters < NbClusters:
     indexOverNbClusters += 1
 
 if PrintEnabled :
-    print("Random generation of the initial Centroids vector :")
+    print("K-means++ Centroids Initialization:")
     print(Centroids)
     print("")
 
@@ -99,13 +96,29 @@ def ZeroTheArray(arr):
     for e in range(len(arr)):
         arr[e] = 0
 
+def InitAnArrayOfSize(size):
+    arr = []
+    while size > 0:
+        arr.append(0.0)
+        size -= 1
+    return arr
+
 def WriteToFile(nameOfTheFile_Prefix, nameOfTheFile_extension, OutputMatrix):
     nameOfTheFile = str(nameOfTheFile_Prefix) + str(nameOfTheFile_extension) + ".csv"
     with open(nameOfTheFile, 'wb') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
         for e in range(OutputMatrix.shape[0]):
             spamwriter.writerow(OutputMatrix[e])
-            e += 1
+
+def WriteArrayToFile(nameOfTheFile_Prefix, nameOfTheFile_extension, OutputArray):
+    nameOfTheFile = str(nameOfTheFile_Prefix) + str(nameOfTheFile_extension) + ".csv"
+    with open(nameOfTheFile, 'wb') as csvfile:
+        spamwriter = csv.writer(csvfile, delimiter=',', quoting=csv.QUOTE_MINIMAL)
+        index = 0
+        while index < NbClusters:
+            print(OutputArray[index])
+            spamwriter.writerow(OutputArray[index])
+            index += 1
 
 def UpdateEachCi():
     ZeroTheArray(Ni)
@@ -152,64 +165,101 @@ def UpdateEachCentroids():
         indexOverN += 1
 
 
-
-###############################
-##      EM ALGORITHM      ##
-###############################
-# Mixture weight
-Phi = numpy.zeros(shape=(N, NbClusters))
-
-# Pi    Pi[k] is the expected number of points coming from the k cluster at the
-#       given iteration divided by the number of points in total.
-Pi = numpy.zeros(shape=(NbClusters, 1))
-
-# We take the same initial Centroids
-Centroids_EM_GMM = Centroids
-
+printOnlyOnce = 0
 def UpdateEachPhiAndPi():
+    global Pi
     global Phi
+    global printOnlyOnce
     Phi = numpy.zeros(shape=(N, NbClusters))
+
     # First while to iterate over every input vector
+
+    # E-step    --      Phi
     indexOverN = 0
     while indexOverN < N :
-        # I keep track of the overall sum of the distances to normalise afterwards.
-        # For a particular vector, the sum of all Phi-k = 1
-        GlobalSum = 0
-        # Second while to calculate the euclidian distance from a vector to every clusters
         indexOverNbClusters = 0
+        SumPhiForThisCluster = 0.0
         while indexOverNbClusters < NbClusters :
-            Sum = 0
-            #Third while to iterate the calcul of the distance to be the sum of the distance from all element of the input vector
-            indexOverD = 0
-            while indexOverD < d:
-                Sum += (X[indexOverN][indexOverD]-Centroids[indexOverNbClusters][indexOverD])**2
-                indexOverD += 1
-            GlobalSum += Sum
-            Phi[indexOverN][indexOverNbClusters] = Sum
+            SigmaK = numpy.zeros(shape=(d, d))
+            SigmaK = MatrixOfSigmas[indexOverNbClusters*d:(indexOverNbClusters+1)*d]
+
+            Determinant = numpy.linalg.det(SigmaK)
+            XminusMu = X[indexOverN] - Centroids_EM_GMM[indexOverNbClusters]
+
+            TransposeXminusMu = numpy.transpose(XminusMu[numpy.newaxis])
+
+            SigmaInverse = inv(SigmaK)
+            PiDet = Pi[0][indexOverNbClusters] * Determinant**(-0.5)
+
+            MatrixMul = XminusMu[numpy.newaxis].dot(SigmaInverse).dot(TransposeXminusMu)
+
+            Exp = math.exp(-0.5 * MatrixMul)
+            if printOnlyOnce == 0 :
+                print("SigmaK")
+                print(SigmaK)
+                print("XminusMu")
+                print(XminusMu)
+                print("TransposeXminusMu")
+                print(TransposeXminusMu)
+                print("SigmaInverse")
+                print(SigmaInverse)
+                print("Pi[0][indexOverNbClusters]")
+                print(Pi[0][indexOverNbClusters])
+                print("PiDet")
+                print(PiDet)
+                print("Determinant")
+                print(Determinant)
+                print("MatrixMul")
+                print(MatrixMul)
+                print("Exp")
+                print(Exp)
+                printOnlyOnce += 1
+            # assert(Exp > 0)
+            Phi[indexOverN][indexOverNbClusters] = PiDet * Exp
+            # assert(Phi[indexOverN][indexOverNbClusters] > 0)
+            #Pi[0][indexOverNbClusters] += Phi[indexOverN][indexOverNbClusters]
+            SumPhiForThisCluster += Phi[indexOverN][indexOverNbClusters]
+            #print("Phi of N = " + str(indexOverN) + " for cluster = " + str(indexOverNbClusters))
+            #print(Phi[indexOverN][indexOverNbClusters])
             indexOverNbClusters += 1
 
-        # We now have an array with the distance from that vector to each clusters
-        assert(Phi.shape[1] == NbClusters)
-
-        # I normalize it to Sum = 1
-        indexOverNbClusters = 0
-        while indexOverNbClusters < NbClusters :
-            Phi[indexOverN][indexOverNbClusters] /= GlobalSum
-
-            # I update Pi right away
-            # Pi-k is the sum of all the Phi-k divided by the number of inputs
-            Pi[indexOverNbClusters] += Phi[indexOverN][indexOverNbClusters]/N
-
-            indexOverNbClusters += 1
-
+        # Divide by the sum of the Pi * MultivariateNormal for each K
+        # print("Phi[indexOverN] before sum = 1")
+        # print(Phi[indexOverN])
+        # print("Pi")
+        # print(Pi)
+        # print(sum(Pi[0]))
+        Phi[indexOverN] = Phi[indexOverN]/SumPhiForThisCluster
+        Pi[0] += Phi[indexOverN]
+        # print("Phi[indexOverN] after sum = 1")
+        # print(Phi[indexOverN])
+        # print("Sum of phi")
+        # print(sum(Phi[indexOverN]))
         indexOverN += 1
+
+    #  Pi[k]
+    # indexOverN = 0
+    # while indexOverN < N :
+    #     indexOverNbClusters = 0
+    #     while indexOverNbClusters < NbClusters :
+    #         # Pi-k is the sum of all the Phi-k divided by the number of inputs
+    #         Pi[0][indexOverNbClusters] += Phi[indexOverN][indexOverNbClusters]/N
+    #         indexOverNbClusters += 1
+    #     indexOverN += 1
+    Pi[0] /= float(N)
 
 
 def UpdateEachMuAndSigma(indexOverNbIterations):
     # The number of vector that belong to each cluster is already calculated and stored in Ni
     # Reset the matrix Centroids
     global Centroids_EM_GMM
+    global MatrixOfSigmas
     Centroids_EM_GMM = numpy.zeros(shape=(NbClusters,d))
+
+    # print("Pi")
+    # print(Pi)
+    # print("MatrixOfSigmas")
+    # print(MatrixOfSigmas)
 
     indexOverN = 0
     while indexOverN < N :
@@ -221,9 +271,12 @@ def UpdateEachMuAndSigma(indexOverNbIterations):
             # print(X[indexOverN].shape)
             # print("Phi[indexOverNbClusters]")
             # print(Phi[indexOverNbClusters].shape)
-            Centroids_EM_GMM[indexOverNbClusters] += (X[indexOverN]*Phi[indexOverN][indexOverNbClusters])/(Pi[indexOverNbClusters]*N)
+            Centroids_EM_GMM[indexOverNbClusters] += (X[indexOverN]*Phi[indexOverN][indexOverNbClusters])/(Pi[0][indexOverNbClusters]*N)
             indexOverNbClusters += 1
         indexOverN += 1
+
+    # print("Centroids_EM_GMM")
+    # print(Centroids_EM_GMM)
 
     indexOverNbClusters = 0
     while indexOverNbClusters < NbClusters:
@@ -231,8 +284,8 @@ def UpdateEachMuAndSigma(indexOverNbIterations):
         Sigma = numpy.zeros(shape=(d, d))
         indexOverN = 0
         while indexOverN < N :
-
-            # Phi[k] * ( x[i] - Centroids_EM_GMM[k]) * transpose ( x[i] - Centroids_EM_GMM[k]) / (Pi[k] * N)
+            SigmaN = numpy.zeros(shape=(d, d))
+            # Phi[k] * ( x[i] - Centroids_EM_GMM[k]) * transpose ( x[i] - Centroids_EM_GMM[k]) / (Pi[0][k] * N)
             # print("X[i].shape")
             # print(X[indexOverN].shape)
             # [numpy.newaxis] allow me to convert a 1D array into a 2D array. From there only I can transpose it
@@ -240,53 +293,133 @@ def UpdateEachMuAndSigma(indexOverNbIterations):
             XtoCentroid = XtoCentroid[numpy.newaxis]
             TransposeXtoCentroid = XtoCentroid.T
 
-            Sigma = (TransposeXtoCentroid).dot(XtoCentroid)
-            Sigma *= Phi[indexOverN][indexOverNbClusters]
-            Sigma /= Pi[indexOverNbClusters] * N
-
+            SigmaN = (TransposeXtoCentroid).dot(XtoCentroid)
+            SigmaN *= Phi[indexOverN][indexOverNbClusters]
+            Sigma += SigmaN
             indexOverN += 1
 
         #print(Sigma)
+        Sigma /= (Pi[0][indexOverNbClusters] * N)
+        MatrixOfSigmas[indexOverNbClusters*d:(indexOverNbClusters+1)*d] = Sigma
 
         WriteToFile("Sigma-"+str(indexOverNbClusters+1)+"-", indexOverNbIterations+1, Sigma)
 
         indexOverNbClusters += 1
 
+    # print("MatrixOfSigmas")
+    # print(MatrixOfSigmas)
 
+
+def InitSigmaToIdentityMatrix():
+    global MatrixOfSigmas
+    k = 0
+    indexOverN = 0
+    while indexOverN < N:
+        #   I retrieve the cluster the data point belongs to
+        y = Ci[indexOverN][0]
+        XtoCentroid = X[indexOverN] - Centroids[k]
+        XtoCentroid = XtoCentroid[numpy.newaxis]
+        TransposeXtoCentroid = XtoCentroid.T
+        MatrixOfSigmas[y*d:(y+1)*d] += (XtoCentroid).dot(TransposeXtoCentroid)
+        indexOverN += 1
+
+    indexOverNbClusters = 0
+    while indexOverNbClusters < NbClusters:
+        SigmaK = MatrixOfSigmas[indexOverNbClusters*d:(indexOverNbClusters+1)*d]
+        SigmaK /= Ni[indexOverNbClusters]
+        MatrixOfSigmas[indexOverNbClusters*d:(indexOverNbClusters+1)*d] = SigmaK
+        indexOverNbClusters += 1
+
+    indexOverDCluster = 0
+    indexOverd = 0
+    while indexOverDCluster < d*NbClusters:
+        MatrixOfSigmas[indexOverDCluster][indexOverd] += 1
+        indexOverd += 1
+        if indexOverd >= d:
+            indexOverd = 0
+        indexOverDCluster += 1
+
+    print(MatrixOfSigmas)
 
 
 ###############################
 ##          MAIN             ##
 ###############################
 
-indexOverNbIterations = 0
-while indexOverNbIterations < NbIterations:
+
+
 
 ###############################
 ##      K-MEANS ALGORITHM    ##
 ###############################
+
+indexOverNbIterations = 0
+while indexOverNbIterations < NbIterations:
     # Expectation Step
     UpdateEachCi()
     # Maximization Step
     UpdateEachCentroids()
     WriteToFile("centroids-", indexOverNbIterations+1, Centroids)
+    indexOverNbIterations += 1
+
+
 
 
 ###############################
-##      EM ALGORITHM         ##
+##      GMM ALGORITHM        ##
 ###############################
+
+#       Probability of each data point to belong to each cluster
+Phi = numpy.zeros(shape=(N, NbClusters))
+
+#       Pi[0][k] is a K-dimensional probability distribution.
+#       Basically the weight of each Gaussian.
+#       Initialized to be the uniform distribution
+Pi = numpy.zeros(shape=(1,NbClusters))
+
+indexOverNbClusters = 0
+while indexOverNbClusters < NbClusters:
+    Pi[0][indexOverNbClusters] = (1/float(NbClusters))
+    indexOverNbClusters += 1
+print("Pi")
+print(Pi)
+
+#       Stores verticaly every Sigma
+MatrixOfSigmas = numpy.zeros(shape=(d*NbClusters, d))
+InitSigmaToIdentityMatrix()
+
+#       Initialization of the centroids to be the result of the K-means algo
+Centroids_EM_GMM = Centroids
+
+
+indexOverNbIterations = 0
+while indexOverNbIterations < NbIterations:
     # Expectation Step
     UpdateEachPhiAndPi()
     # Maximization Step
     UpdateEachMuAndSigma(indexOverNbIterations)
-    WriteToFile("pi-", indexOverNbIterations+1, Pi)
+    # PiMatrix = numpy.mat(Pi)
+    # print(PiMatrix)
+    # PiMatrix = numpy.transpose(PiMatrix[numpy.newaxis])
+    # print(PiMatrix)
+    WriteToFile("pi-", indexOverNbIterations+1, numpy.transpose(Pi))
     WriteToFile("mu-", indexOverNbIterations+1, Centroids_EM_GMM)
-
     indexOverNbIterations += 1
 
-color=['red','green','blue', 'yellow', 'brown']
-fig=plt.figure()
-ax3D = Axes3D(fig)
-for e in range(0,N):
-    ax3D.scatter(X[e][0], X[e][1], X[e][2], color=color[int(Ci[e])])
-plt.show()
+print("")
+print("Finishes OK.")
+print("")
+
+# print("--- %s seconds ---" % (time.time() - start_time))
+
+
+# Print a 3D graph.
+# Each color represents the belonging to a certain cluster.
+
+# if PrintEnabled:
+#     color=['red','green','blue', 'yellow', 'brown']
+#     fig=plt.figure()
+#     ax3D = Axes3D(fig)
+#     for e in range(0,N):
+#         ax3D.scatter(X[e][0], X[e][1], X[e][2], color=color[int(Ci[e])])
+#     plt.show()

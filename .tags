@@ -1,0 +1,45 @@
+csv	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^import csv$/;"	namespace	line:1
+sys	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^import sys$/;"	namespace	line:2
+numpy	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^import numpy$/;"	namespace	line:3
+math	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^import math$/;"	namespace	line:4
+genfromtxt	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^from numpy import genfromtxt$/;"	namespace	line:5
+inv	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^from numpy.linalg import inv$/;"	namespace	line:6
+random	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^import random$/;"	namespace	line:7
+randint	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^from random import randint$/;"	namespace	line:8
+PrintEnabled	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^PrintEnabled = 0$/;"	variable	line:15
+X	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^X = genfromtxt(sys.argv[1], delimiter=',')$/;"	variable	line:17
+NbIterations	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^NbIterations = 10$/;"	variable	line:20
+NbClusters	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^NbClusters = 5$/;"	variable	line:23
+PrintEnabled	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^    PrintEnabled = 1$/;"	variable	line:25
+NbClusters	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^    NbClusters = int(sys.argv[2])$/;"	variable	line:26
+N	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^N = X.shape[0]$/;"	variable	line:29
+d	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^d = X.shape[1]$/;"	variable	line:31
+Ci	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^Ci = numpy.zeros(shape=(N,1))$/;"	variable	line:38
+Centroids	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^Centroids = numpy.zeros(shape=(NbClusters,d))$/;"	variable	line:41
+XminAndMax	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^XminAndMax = numpy.zeros(shape=(2,d))$/;"	variable	line:46
+Ni	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^Ni = []$/;"	variable	line:50
+indexOverNbClusters	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^indexOverNbClusters = 0$/;"	variable	line:55
+C	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^C = 1$/;"	variable	line:65
+GetNextCentroid	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^def GetNextCentroid(C):$/;"	function	line:66
+indexOverNbClusters	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^indexOverNbClusters = 1$/;"	variable	line:85
+ZeroTheArray	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^def ZeroTheArray(arr):$/;"	function	line:95
+InitAnArrayOfSize	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^def InitAnArrayOfSize(size):$/;"	function	line:99
+WriteToFile	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^def WriteToFile(nameOfTheFile_Prefix, nameOfTheFile_extension, OutputMatrix):$/;"	function	line:106
+WriteArrayToFile	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^def WriteArrayToFile(nameOfTheFile_Prefix, nameOfTheFile_extension, OutputArray):$/;"	function	line:113
+UpdateEachCi	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^def UpdateEachCi():$/;"	function	line:123
+UpdateEachCentroids	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^def UpdateEachCentroids():$/;"	function	line:155
+printOnlyOnce	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^printOnlyOnce = 0$/;"	variable	line:168
+UpdateEachPhiAndPi	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^def UpdateEachPhiAndPi():$/;"	function	line:169
+UpdateEachMuAndSigma	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^def UpdateEachMuAndSigma(indexOverNbIterations):$/;"	function	line:252
+InitSigmaToIdentityMatrix	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^def InitSigmaToIdentityMatrix():$/;"	function	line:313
+indexOverNbIterations	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^indexOverNbIterations = 0$/;"	variable	line:356
+Phi	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^Phi = numpy.zeros(shape=(N, NbClusters))$/;"	variable	line:373
+Pi	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^Pi = numpy.zeros(shape=(1,NbClusters))$/;"	variable	line:378
+indexOverNbClusters	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^indexOverNbClusters = 0$/;"	variable	line:380
+MatrixOfSigmas	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^MatrixOfSigmas = numpy.zeros(shape=(d*NbClusters, d))$/;"	variable	line:388
+Centroids_EM_GMM	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^Centroids_EM_GMM = Centroids$/;"	variable	line:392
+indexOverNbIterations	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/Project 3/hw3_clustering.py	/^indexOverNbIterations = 0$/;"	variable	line:395
+Machine Learning Online Course from **Columbia University**	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/README.md	/^## Machine Learning Online Course from **Columbia University**$/;"	function	line:1
+Linear Regression (Project 1)	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/README.md	/^## Linear Regression (Project 1)$/;"	function	line:5
+Bayes Classifier (Project 2)	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/README.md	/^## Bayes Classifier (Project 2)$/;"	function	line:9
+K-Means & Gaussian Mixture Models (Project 3)	/Users/guiwake/Documents/Programmation/Edx/Columbia-University/Machine-Learning/README.md	/^## K-Means & Gaussian Mixture Models (Project 3)$/;"	function	line:13

@@ -6,18 +6,25 @@ Here is a repo where you can find my work on several machine learning algorithms
 
 ...
 
-## Bayes Classifier
+## Bayes Classifier (Project 2)
 
 ...
 
-## K-Means & Gaussian Mixture Model
+## K-Means & Gaussian Mixture Models (Project 3)
 
 The idea here is that our input data points are in a X.csv file. We do not have missing values.
 
 1.  K-Means algorithms
 
-First, I generated randomly K centroids. I wasn't very happy with my results so I looked for a better initialization of the centroids and I've found the K-means++ algorithm.
-I choose the first centroid randomly. Then, iteratively I calculate the distance D from every point to that centroid. I then choose the next centroid with a probability weighted by the D squared. This increases the probability to end up with centroids far from each other. The further each initial centroids are, the higher the probability to end up with true clusters in the end.
+**Problem:** We try to find K centroids  {μ1,…,μK}  and the corresponding assignments of each data point  {c1,…,cn}   where each  ci∈{1,…,K}   and c_i indicates which of the K clusters the observation x_i belongs to. The objective function that we seek to minimize can be written as
+
+![ScreenShot](Images/minimize_kmeans.tiff)
+
+**Solution:** First, I generated randomly K centroids. I wasn't very happy with my results so I looked for a better initialization of the centroids and I've found the K-means++ algorithm. The implementation is the following :
+
+I choose the first centroid randomly. Then, iteratively I calculate the distance D from every point to that centroid. I then choose the next centroid with a probability weighted by the distance D squared. This effectively increases the probability to end up with centroids far from each other. The further each initial centroids are, the higher the probability to end up with true clusters in the end.
+
+I then successively iterate through the following steps:
 
 Expectation Step : I assign each data entry to the closest centroid. Closest meaning here the squared Euclidian distance.
 
@@ -29,7 +36,24 @@ The output is the centroids-[iteration].csv files.
 
 ![ScreenShot](Images/kmeans.png)
 
+We can see on the picture that each color represents one cluster.
+
 
 2.  Maximum Likelihood EM for the Gaussian Mixture Model (GMM)
 
-We treat the cluster assignments of each data point as the auxiliary data (missing data).
+**Problem:** Now the data is generated as follows :
+
+![ScreenShot](Images/gmm.tiff)
+
+In other words, the ith observation is first assigned to one of K clusters according to the probabilities in vector π, and the value of observation xi is then generated from one of K multivariate Gaussian distributions, using the mean and covariance indexed by ci.
+We treat the cluster assignments of each data point as the auxiliary data (missing data of the EM algorithm).
+
+**Solution:** Here is the solution I implemented.
+
+![ScreenShot](Images/gmm.png)
+
+Phi for a certain data point would be the probabilities to belong to each cluster. Its sum is 1. It really shows here the soft clustering dimension of the GMM algorithm. I use the plug-in classifier to evaluate this function further detailed here.
+
+![ScreenShot](Images/phi.png)
+
+The initialization of π, mu and sigma are really impacting the efficiency of the solution. The way I did is using the results from the previous K-means++ algorithm.

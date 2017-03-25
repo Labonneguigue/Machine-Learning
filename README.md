@@ -2,9 +2,28 @@
 
 Here is a repo where you can find my work on several machine learning algorithms implementation in Python.
 
-## Linear Regression (Project 1)
+## Ridge Regression and Active Learning (Project 1)
 
-...
+1.  Ridge Regression
+
+**Problem:** In this part I implement a ridge regression algorithm (ℓ2-regularized least squares linear regression). By maximizing the objective function we find the unknown parameters wRR.
+
+![ScreenShot](Images/rr.tiff)
+
+**Solution:** The parameters wRR are calculated that way:
+
+![ScreenShot](Images/rr-solution.tiff)
+
+Once wRR is learned from the training data (X, Y), I predict the output Y from a test sample using :
+
+![ScreenShot](Images/rr-prediction.tiff)
+
+2.  Active Learning
+
+**Problem:**
+
+**Solution:**
+
 
 ## Bayes Classifier (Project 2)
 

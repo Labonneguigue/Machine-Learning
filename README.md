@@ -18,11 +18,24 @@ Once wRR is learned from the training data (X, Y), I predict the output Y from a
 
 ![ScreenShot](Images/rr-prediction.tiff)
 
+I obtain this graph where the input data is in blue, the predicted output from test data is in red. What seems to be a green line is a plane cutting through the space. We can se that each predicted output are superposed with this plane as it is plotted using the learned parameters wRR. Here the dimension of the input data is only 2 to create a meaningful plot but obviously it can be extended to any dimension.
+
+![ScreenShot](Images/rr-graph.png)
+
+
+
 2.  Active Learning
 
 **Problem:**
 
 **Solution:**
+
+
+The way to execute these 2 algorithms is by executing
+
+```
+python hw1_regression.py <lambda> <sigma> X_train.csv y_train.csv X_test.csv
+```
 
 
 ## Bayes Classifier (Project 2)

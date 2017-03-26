@@ -6,8 +6,8 @@ from numpy import genfromtxt
 from numpy.linalg import inv
 import random
 from random import randint
-#import matplotlib.pyplot as plt
-#from mpl_toolkits.mplot3d import axes3d, Axes3D
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import axes3d, Axes3D
 #import time
 #start_time = time.time()
 
@@ -416,10 +416,10 @@ print("")
 # Print a 3D graph.
 # Each color represents the belonging to a certain cluster.
 
-# if PrintEnabled:
-#     color=['red','green','blue', 'yellow', 'brown']
-#     fig=plt.figure()
-#     ax3D = Axes3D(fig)
-#     for e in range(0,N):
-#         ax3D.scatter(X[e][0], X[e][1], X[e][2], color=color[int(Ci[e])])
-#     plt.show()
+if PrintEnabled:
+    color=['red','green','blue', 'yellow', 'brown']
+    fig=plt.figure()
+    ax3D = Axes3D(fig)
+    for e in range(0,N):
+        ax3D.scatter(X[e][0], X[e][1], X[e][2], color=color[int(Ci[e])])
+    plt.show()

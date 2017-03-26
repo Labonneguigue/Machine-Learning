@@ -3,40 +3,28 @@ import sys
 import numpy
 from numpy import genfromtxt
 from numpy.linalg import inv
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import axes3d, Axes3D
 
 Lambda = float(sys.argv[1])
 Sigma2 = float(sys.argv[2])
 
-#print("Lambda = ")
-#print(Lambda)
-#print("Sigma2 = ")
-#print(Sigma2)
+# X_train_CSV = sys.argv[3]
+# y_train_CSV = sys.argv[4]
+# X_test_CSV = sys.argv[5]
 
-X_train_CSV = sys.argv[3]
-y_train_CSV = sys.argv[4]
-X_test_CSV = sys.argv[5]
+X_train = genfromtxt(sys.argv[3], delimiter=',')
+y_train = genfromtxt(sys.argv[4], delimiter=',')
+X_test = genfromtxt(sys.argv[5], delimiter=',')
 
-
-#X_train = genfromtxt('X_train.csv', delimiter=',')
-X_train = genfromtxt(X_train_CSV, delimiter=',')
-##print("X_train = ")
-##print(X_train)
-
-#y_train = genfromtxt('y_train.csv', delimiter=',')
-y_train = genfromtxt(y_train_CSV, delimiter=',')
-##print("y_train = ")
-##print(y_train)
-
-#X_test = genfromtxt('X_test.csv', delimiter=',')
-X_test = genfromtxt(X_test_CSV, delimiter=',')
-##print("X_test = ")
-##print(X_test)
-
-# Get the number of columns -> size of identity_matrix
+# Get the number of columns -> dimension of the input vecto -> size of identity_matrix
 # Shape returns a tuple (rows, columns)
-columns = X_train.shape[1]
+N = X_train.shape[0]
+d = X_train.shape[1]
 
-identity_matrix = numpy.identity(columns)
+N_test = X_test.shape[0]
+
+identity_matrix = numpy.identity(d)
 
 LambdaDotIdentityMatrix = numpy.multiply(identity_matrix,Lambda)
 ##print("LambdaDotIdentityMatrix = ")
@@ -65,6 +53,34 @@ with open(nameOfThePart1File, 'wb') as csvfile:
     spamwriter = csv.writer(csvfile, delimiter='\n', quotechar='|', quoting=csv.QUOTE_MINIMAL)
     spamwriter.writerow(numpy.transpose(wRR))
 
+
+color=['brown', 'blue']
+fig=plt.figure()
+ax3D = Axes3D(fig)
+
+point1  = numpy.array([0,0,wRR[2]])
+normal1 = numpy.array([wRR[0],wRR[1],-1])
+# a plane is a*x+b*y+c*z+d=0
+# [a,b,c] is the normal. Thus, we have to calculate
+# d and we're set
+d1 = -numpy.sum(point1*normal1)# dot product
+# create x,y
+xx, yy = numpy.meshgrid(range(2), range(2))
+# calculate corresponding z
+z1 = (-normal1[0]*xx - normal1[1]*yy - d1)*1./normal1[2]
+# plot the surface
+# plt3d = plt.figure().gca(projection='3d')
+ax3D.plot_surface(xx,yy,z1, color='yellow', antialiased=True)
+
+ax3D.set_xlabel("x1 : Dimension 1 input")
+ax3D.set_ylabel("x2 : Dimension 2 input")
+ax3D.set_zlabel("y1 : Output")
+for e in range(0,N):        # Plot training data
+    ax3D.scatter(X_train[e][0], X_train[e][1], y_train[e], color=color[1])
+for e in range(0,N_test):        # Plot test data
+    ax3D.scatter(X_test[e][0], X_test[e][1], wRR.dot(X_test[e]), color=color[0])
+
+plt.show()
 
 #############
 #   Part2   #

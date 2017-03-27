@@ -55,6 +55,15 @@ Then I do the following steps iteratively :
 
 A way to test my algorithm is to feed him with labelled data `X_train.csv` and `y_train.csv` to train the weights w and then some test data `X_test.csv` to see whether it choose the right data points to learn from.
 
+**Verification:** One way to verify that my Active Learning algorithm if indeed picking up the right data points and is learning efficiently is by calculating the differential entropy between each steps. As the entropy is the measure of the spread of the distribution, the smaller it gets the more our distribution becomes certain/precise (meaning a smaller variance). Using a rank-one update property of the determinant, the entropy of the prior Hprior is related to the entropy of the posterior Hpost as follows:
+
+![ScreenShot](Images/entropy-definition.tiff)
+
+And we obtain such a result after iterating over 50 data points:
+
+![ScreenShot](Images/active-entropy.png)
+
+
 The way to execute these 2 algorithms is by executing :
 
 `python hw1_regression.py <lambda> <sigma2> X_train.csv y_train.csv X_test.csv`

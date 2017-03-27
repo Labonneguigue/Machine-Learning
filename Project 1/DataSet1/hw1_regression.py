@@ -16,11 +16,13 @@ X_test = genfromtxt(sys.argv[5], delimiter=',')
 # Get the number of columns -> dimension of the input vector -> size of identity_matrix
 N = X_train.shape[0]
 d = X_train.shape[1]
-
 N_test = X_test.shape[0]
 
-identity_matrix = numpy.identity(d)
+######################
+##      PART 1      ##
+######################
 
+identity_matrix = numpy.identity(d)
 LambdaDotIdentityMatrix = numpy.multiply(identity_matrix,Lambda)
 XTransposeX = numpy.transpose(X_train).dot(X_train)
 Inverse = inv(LambdaDotIdentityMatrix+XTransposeX)
@@ -32,42 +34,42 @@ with open(nameOfThePart1File, 'wb') as csvfile:
     spamwriter = csv.writer(csvfile, delimiter='\n', quotechar='|', quoting=csv.QUOTE_MINIMAL)
     spamwriter.writerow(numpy.transpose(wRR))
 
+if Sigma2 > 2 :
+    color=['brown', 'blue']
+    fig=plt.figure()
+    ax3D = Axes3D(fig)
 
-color=['brown', 'blue']
-fig=plt.figure()
-ax3D = Axes3D(fig)
+    point1  = numpy.array([0,0,wRR[2]])
+    normal1 = numpy.array([wRR[0],wRR[1],-1])
+    # a plane is a*x+b*y+c*z+d=0
+    # [a,b,c] is the normal. Thus, we have to calculate
+    # d and we're set
+    d1 = -numpy.sum(point1*normal1)# dot product
+    # create x,y
+    xx, yy = numpy.meshgrid(range(2), range(2))
+    # calculate corresponding z
+    z1 = (-normal1[0]*xx - normal1[1]*yy - d1)*1./normal1[2]
+    # plot the surface
+    # plt3d = plt.figure().gca(projection='3d')
+    ax3D.plot_surface(xx,yy,z1, color='yellow', antialiased=True)
 
-point1  = numpy.array([0,0,wRR[2]])
-normal1 = numpy.array([wRR[0],wRR[1],-1])
-# a plane is a*x+b*y+c*z+d=0
-# [a,b,c] is the normal. Thus, we have to calculate
-# d and we're set
-d1 = -numpy.sum(point1*normal1)# dot product
-# create x,y
-xx, yy = numpy.meshgrid(range(2), range(2))
-# calculate corresponding z
-z1 = (-normal1[0]*xx - normal1[1]*yy - d1)*1./normal1[2]
-# plot the surface
-# plt3d = plt.figure().gca(projection='3d')
-ax3D.plot_surface(xx,yy,z1, color='yellow', antialiased=True)
+    ax3D.set_xlabel("x1 : Dimension 1 input")
+    ax3D.set_ylabel("x2 : Dimension 2 input")
+    ax3D.set_zlabel("y1 : Output")
+    for e in range(0,N):        # Plot training data
+        ax3D.scatter(X_train[e][0], X_train[e][1], y_train[e], color=color[1])
+    for e in range(0,N_test):        # Plot test data
+        ax3D.scatter(X_test[e][0], X_test[e][1], wRR.dot(X_test[e]), color=color[0])
 
-ax3D.set_xlabel("x1 : Dimension 1 input")
-ax3D.set_ylabel("x2 : Dimension 2 input")
-ax3D.set_zlabel("y1 : Output")
-for e in range(0,N):        # Plot training data
-    ax3D.scatter(X_train[e][0], X_train[e][1], y_train[e], color=color[1])
-for e in range(0,N_test):        # Plot test data
-    ax3D.scatter(X_test[e][0], X_test[e][1], wRR.dot(X_test[e]), color=color[0])
+    plt.show()
 
-plt.show()
 
 #############
 #   Part2   #
 #############
 
+
 def SetSigmaOs(Sigma, Test_Set_Local):
-    #print("Step 2 : ")
-    #print("SetSigmaOs")
     Sigma0Array_Local = numpy.arange(float(Test_Set_Local.shape[0]))
     index = 0
     for row in Test_Set_Local:
@@ -76,14 +78,10 @@ def SetSigmaOs(Sigma, Test_Set_Local):
     return Sigma0Array_Local
 
 def CalculPosterior(SigmaPrior_Local,row, Array_Test):
-    #print("Step 5 : ")
-    #print("CalculPosterior")
     SigmaPosterior = numpy.multiply(1/Sigma2, Array_Test[row,:])
     SigmaPosterior = numpy.multiply(SigmaPosterior, numpy.transpose(Array_Test[row,:]))
     SigmaPosterior = SigmaPosterior + inv(SigmaPrior_Local)
     SigmaPosterior = inv(SigmaPosterior)
-    #print("SigmaPosterior")
-    #print(SigmaPosterior)
     return SigmaPosterior
 
 def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
@@ -92,7 +90,6 @@ def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
 def ReturnHighestValuesIndex(value, array):
     index=0
     while index<array.shape[0]:
-        #if array[index] == value:
         if isclose(array[index],value):
             return index
         index += 1
@@ -111,36 +108,33 @@ def GetCorrectiveValue(Local_Highest,indexGlobal_Local):
         local_index += 1
     return Local_Highest
 
-#print("")
-#print("Part2")
-#print("")
+def CalcEntropy(Entropy_arr, x0):
+    Hprior = Entropy_arr[-1]
+    ln = numpy.log(1 + (1/Sigma2)*numpy.transpose(Test_Set[x0,:]).dot(SigmaPrior).dot(Test_Set[x0,:]))
+    Hpost = Hprior - ln * d / 2
+    Entropy_arr.append(Hpost)
+    return Entropy_arr
 
-#print("Step 1 :")
 SigmaPriorInverse = LambdaDotIdentityMatrix + numpy.multiply(1/Sigma2, XTransposeX)
 SigmaPrior = inv(SigmaPriorInverse)
-#print("SigmaPrior")
-#print(SigmaPrior)
-
 Test_Set = X_test
 OutputArray = []
-
+Entropy = []
+#Arbitrary prior entropy
+Entropy.append(0.0)
 
 indexGlobal = 0
-while indexGlobal < 10:
+while indexGlobal < 50:
     # Part2
-    #print("SigmaPrior")
-    #print(SigmaPrior)
     Sigma0Array = SetSigmaOs(SigmaPrior, Test_Set);
-    #print("Sigma0Array")
-    #print(Sigma0Array)
 
     # Part3
-    #print("Part 3 : ")
     Sigma0ArraySorted = numpy.sort(Sigma0Array,axis=0)
     HighestValueIndex = ReturnHighestValuesIndex(Sigma0ArraySorted[-1], Sigma0Array)
     SavedHighestValueIndex = HighestValueIndex
+    Entropy = CalcEntropy(Entropy, HighestValueIndex)
     print(HighestValueIndex)
-    #HighestValueIndex = GetCorrectiveValue(HighestValueIndex)
+    #Correction of the index as we iteratively delete the chosen data point
     HighestValueIndex += indexGlobal
     ToBeSubstracted = 0
     for e in OutputArray:
@@ -148,22 +142,14 @@ while indexGlobal < 10:
             ToBeSubstracted += 1
     HighestValueIndex = HighestValueIndex - ToBeSubstracted
     OutputArray.append(HighestValueIndex)
+
     # Part4
-    #print("Part 4 : ")
-    #print("TestSet size before : "+str(Test_Set.shape))
-    ##print(Test_Set)
     Test_Set = numpy.delete(Test_Set, (SavedHighestValueIndex), axis=0)
-    #print("TestSet size after : "+str(Test_Set.shape))
-    #print(Test_Set)
 
     # Part5
     SigmaPosterior = CalculPosterior(SigmaPrior,HighestValueIndex, X_train)
     SigmaPrior = SigmaPosterior
-    # Loop
     indexGlobal += 1
-
-#print("active :")
-#print(OutputArray)
 
 nameOfThePart2File = "active_"+str(int(Lambda))+"_"+str(int(Sigma2))+".csv"
 print(nameOfThePart2File)
@@ -172,7 +158,10 @@ with open(nameOfThePart2File, 'wb') as csvfile2:
     spamwriter2 = csv.writer(csvfile2, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
     spamwriter2.writerow(OutputArray)
 
-
+print (Entropy)
+plt.plot(Entropy)
+plt.ylabel('Entropy')
+plt.show()
 # index= X_test.shape[0]-1
 # while index>X_test.shape[0]-11 :
 #     index2 = 0

@@ -9,16 +9,11 @@ from mpl_toolkits.mplot3d import axes3d, Axes3D
 Lambda = float(sys.argv[1])
 Sigma2 = float(sys.argv[2])
 
-# X_train_CSV = sys.argv[3]
-# y_train_CSV = sys.argv[4]
-# X_test_CSV = sys.argv[5]
-
 X_train = genfromtxt(sys.argv[3], delimiter=',')
 y_train = genfromtxt(sys.argv[4], delimiter=',')
 X_test = genfromtxt(sys.argv[5], delimiter=',')
 
-# Get the number of columns -> dimension of the input vecto -> size of identity_matrix
-# Shape returns a tuple (rows, columns)
+# Get the number of columns -> dimension of the input vector -> size of identity_matrix
 N = X_train.shape[0]
 d = X_train.shape[1]
 
@@ -27,28 +22,12 @@ N_test = X_test.shape[0]
 identity_matrix = numpy.identity(d)
 
 LambdaDotIdentityMatrix = numpy.multiply(identity_matrix,Lambda)
-##print("LambdaDotIdentityMatrix = ")
-##print(LambdaDotIdentityMatrix)
-
 XTransposeX = numpy.transpose(X_train).dot(X_train)
-##print("XTransposeX")
-##print(XTransposeX)
-
 Inverse = inv(LambdaDotIdentityMatrix+XTransposeX)
-##print("Inverse")
-##print(Inverse)
-
 XtransposeY = numpy.transpose(X_train).dot(y_train)
-# #print("XtransposeY")
-# #print(XtransposeY)
-
 wRR = Inverse.dot(XtransposeY)
-#print("wRR")
-#print(wRR)
 
 nameOfThePart1File = "wRR_"+str(int(Lambda))+".csv"
-#print(nameOfThePart1File)
-
 with open(nameOfThePart1File, 'wb') as csvfile:
     spamwriter = csv.writer(csvfile, delimiter='\n', quotechar='|', quoting=csv.QUOTE_MINIMAL)
     spamwriter.writerow(numpy.transpose(wRR))

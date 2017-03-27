@@ -2,6 +2,14 @@
 
 Here is a repo where you can find my work on several machine learning algorithms implementation in Python.
 
+You would need :
+
+-   [Numpy](https://scipy.org/install.html)
+-   [Matplotlib](http://matplotlib.org/users/installing.html)
+
+to run my code.
+
+
 ## Ridge Regression and Active Learning (Project 1)
 
 1.  Ridge Regression
@@ -22,11 +30,12 @@ I obtain this graph where the input data is in blue, the predicted output from t
 
 ![ScreenShot](Images/rr-graph.png)
 
+The weights weights wRR are exported to the `wRR_[lambda].csv` file.
 
+2.  Active Learning
 
-#2.  Active Learning
-
-**Problem:** Active Learning (effectively Bayesian Learning) is often used is the case of sequential data. That is, the posterior after seeing some data becomes the prior for the next data. If we let X and y be the data we already learned from and y0 and x0 be some new data, by Bayes rule we have :
+**Problem:** Active Learning (effectively Bayesian Learning) is often used is the case of sequential data. There are situations in which unlabeled data is abundant but manually labeling is expensive. Since the learner/algorithm chooses the data points, the number of them to learn a concept can often be much lower than the number required in normal supervised learning.
+If we let X and y be the data we already learned from and y0 and x0 be some new data, by Bayes rule we have :
 
 ![ScreenShot](Images/active-bayes.tiff)
 
@@ -38,17 +47,19 @@ I want to learn the new parameters w from the new data and the old one to make p
 ![ScreenShot](Images/active-prediction.tiff)
 
 Then I do the following steps iteratively :
-1.  Form predictive distribution p(y0|x0, y, X) for all unmeasured x0 ∈ D
-2.  Pick the x0 for which sigma0^2 is largest and measure y0
+1.  Form predictive distribution p(y0|x0, y, X) for all unmeasured x0 ∈ D.
+2.  Pick the x0 for which sigma0^2 (measuring how confident we are) is largest and measure y0. This is indeed the measure that is predicted to be the furthest off what our correct output should be.
 3.  Update the posterior p(w|y, X) where now y and X take into consideration the last measured data (y0, x0).
 
+![ScreenShot](Images/active-update.tiff)
 
+A way to test my algorithm is to feed him with labelled data `X_train.csv` and `y_train.csv` to train the weights w and then some test data `X_test.csv` to see whether it choose the right data points to learn from.
 
-The way to execute these 2 algorithms is by executing
+The way to execute these 2 algorithms is by executing :
 
-```
-python hw1_regression.py <lambda> <sigma> X_train.csv y_train.csv X_test.csv
-```
+`python hw1_regression.py <lambda> <sigma2> X_train.csv y_train.csv X_test.csv`
+
+The first 10 data points it chooses to learn are exported to the `active_[lambda]\_[sigma2].csv` file.
 
 
 ## Bayes Classifier (Project 2)

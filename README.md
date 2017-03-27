@@ -6,7 +6,7 @@ Here is a repo where you can find my work on several machine learning algorithms
 
 1.  Ridge Regression
 
-**Problem:** In this part I implement a ridge regression algorithm (ℓ2-regularized least squares linear regression). By maximizing the objective function we find the unknown parameters wRR.
+**Problem:** In this part I implement a ridge regression algorithm (ℓ2-regularized least squares linear regression). By maximizing the objective function I find the unknown parameters wRR.
 
 ![ScreenShot](Images/rr.tiff)
 
@@ -18,7 +18,7 @@ Once wRR is learned from the training data (X, Y), I predict the output Y from a
 
 ![ScreenShot](Images/rr-prediction.tiff)
 
-I obtain this graph where the input data is in blue, the predicted output from test data is in red. What seems to be a green line is a plane cutting through the space. We can se that each predicted output are superposed with this plane as it is plotted using the learned parameters wRR. Here the dimension of the input data is only 2 to create a meaningful plot but obviously it can be extended to any dimension.
+I obtain this graph where the input data is in blue, the predicted output from test data is in red. What seems to be a green line is a plane cutting through the space. We can see that each predicted output are superposed with this plane as it is plotted using the learned parameters wRR. Here the dimension of the input data is only 2 to create a meaningful plot but obviously it can be extended to any dimension.
 
 ![ScreenShot](Images/rr-graph.png)
 
@@ -26,9 +26,19 @@ I obtain this graph where the input data is in blue, the predicted output from t
 
 2.  Active Learning
 
-**Problem:**
+**Problem:** Active Learning (effectively Bayesian Learning) is often used is the case of sequential data. That is, the posterior after seeing some data becomes the prior for the next data. If we let X and y be the data we already learned from and y0 and x0 be some new data, by Bayes rule we have :
 
-**Solution:**
+![ScreenShot](Images/active-bayes.tiff)
+
+I want to learn the new parameters w from the new data and the old one to make predictions for new y0. The posterior distribution we learned from (y,X) becomes the prior distribution for (y0, x0).
+
+
+***Solution:*** From the measured dataset (y,X) I learn the posterior distribution p(w|y, X). I can then construct the predictive distribution for every remaining x0 ∈ D:
+
+![ScreenShot](active-prediction.tiff)
+
+Then I do the following steps :
+1.   
 
 
 The way to execute these 2 algorithms is by executing
@@ -44,11 +54,11 @@ python hw1_regression.py <lambda> <sigma> X_train.csv y_train.csv X_test.csv
 
 ## K-Means & Gaussian Mixture Models (Project 3)
 
-The idea here is that our input data points are in a X.csv file. We do not have missing values.
+The idea here is that our input data points are in a X.csv file. There are no missing values.
 
 1.  K-Means algorithms
 
-**Problem:** We try to find K centroids  {μ1,…,μK}  and the corresponding assignments of each data point  {c1,…,cn}   where each  ci∈{1,…,K}   and c_i indicates which of the K clusters the observation x_i belongs to. The objective function that we seek to minimize can be written as
+**Problem:** I try to find K centroids  {μ1,…,μK}  and the corresponding assignments of each data point  {c1,…,cn}   where each  ci∈{1,…,K}   and c_i indicates which of the K clusters the observation x_i belongs to. The objective function that needs to be minimized can be written as
 
 ![ScreenShot](Images/minimize_kmeans.tiff)
 
@@ -78,7 +88,7 @@ We can see on the picture that each color represents one cluster.
 ![ScreenShot](Images/gmm.tiff)
 
 In other words, the ith observation is first assigned to one of K clusters according to the probabilities in vector π, and the value of observation xi is then generated from one of K multivariate Gaussian distributions, using the mean and covariance indexed by ci.
-We treat the cluster assignments of each data point as the auxiliary data (missing data of the EM algorithm).
+I treat the cluster assignments of each data point as the auxiliary data (missing data of the EM algorithm).
 
 **Solution:** Here is the solution I implemented.
 

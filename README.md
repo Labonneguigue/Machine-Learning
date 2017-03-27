@@ -24,7 +24,7 @@ I obtain this graph where the input data is in blue, the predicted output from t
 
 
 
-2.  Active Learning
+#2.  Active Learning
 
 **Problem:** Active Learning (effectively Bayesian Learning) is often used is the case of sequential data. That is, the posterior after seeing some data becomes the prior for the next data. If we let X and y be the data we already learned from and y0 and x0 be some new data, by Bayes rule we have :
 
@@ -33,12 +33,15 @@ I obtain this graph where the input data is in blue, the predicted output from t
 I want to learn the new parameters w from the new data and the old one to make predictions for new y0. The posterior distribution we learned from (y,X) becomes the prior distribution for (y0, x0).
 
 
-***Solution:*** From the measured dataset (y,X) I learn the posterior distribution p(w|y, X). I can then construct the predictive distribution for every remaining x0 ∈ D:
+**Solution:** From the measured dataset (y,X) I learn the posterior distribution p(w|y, X). I can then construct the predictive distribution for every remaining x0 ∈ D:
 
-![ScreenShot](active-prediction.tiff)
+![ScreenShot](Images/active-prediction.tiff)
 
-Then I do the following steps :
-1.   
+Then I do the following steps iteratively :
+1.  Form predictive distribution p(y0|x0, y, X) for all unmeasured x0 ∈ D
+2.  Pick the x0 for which sigma0^2 is largest and measure y0
+3.  Update the posterior p(w|y, X) where now y and X take into consideration the last measured data (y0, x0).
+
 
 
 The way to execute these 2 algorithms is by executing
